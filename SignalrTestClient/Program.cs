@@ -7,6 +7,7 @@ using Microsoft.AspNet.SignalR.Client;
 
 namespace SignalrTestClient
 {
+    // Note this class has to be the same on the Hub as the client. See the Hub Code.
     public class Player
 
     {
@@ -22,14 +23,17 @@ namespace SignalrTestClient
             
             HubConnection connection = new HubConnection("http://localhost:15250/");
             proxy = connection.CreateHubProxy("MyHub1");
+            connection.Start().Wait();
             connection.Received += Connection_Received;
-            proxy.Invoke<List<Player>>("getPlayers", (Players) => {
-                foreach(Player p in Players)
+            proxy.Invoke<List<Player>>("getPlayers").ContinueWith((callback) =>
+            {
+                foreach (Player p in callback.Result)
                 {
-                    Console.WriteLine("Player ", p.PlayerID);
+                    Console.WriteLine("Player ID is {0} ", p.PlayerID);
                 }
-            });
+            }).Wait() ;
 
+            Console.WriteLine("I'm back in the main thread. Press return to end");
             Console.ReadLine();
         }
 

@@ -13,6 +13,8 @@ namespace SignalRServer2016Repeat
         // Add more fields here
     }
 
+
+    // Note this 
     public static class HubState
 
     {
@@ -31,6 +33,11 @@ namespace SignalRServer2016Repeat
         public void Hello()
         {
             Clients.All.hello();
+        }
+
+        public void sendPlayers()
+        {
+            Clients.Caller.RecievePlayers(HubState.players);
         }
 
         public List<Player> getPlayers()
